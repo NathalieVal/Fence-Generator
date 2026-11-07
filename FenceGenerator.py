@@ -3,22 +3,47 @@
 # import
 
 # Fence Generator Class
-    # NURBS curve input
+    # NURBS curve input:
         # 1. when user clicks on chosen NURBS curve, and clicks "generate fence" program retrieves curve information
         # 2. program checks if curve works for program function
         # 3. If yes, input can be used to generate fence.
         # 3.5 IF NOT, display warning.
 
-    # Generate fence
+    # Generate fence:
         # Curve info needed:
             # Curve length
             # -- How many posts an fit within this length based on the spacing requested? (I just realized math will be required for this haha)
-            # Post position
+                # Retrieve selected curve
+                # Calculate total length        
+                # Return information
+
+            # Post positions:
             # -- For now, will be assuming that the user wants even spacing.
-            # -- Fence MUST end with a post (pattern assignment already coming into use)
-            # Curve direction
+            # -- Fence MUST end with a post (pattern assignment already coming in to use)
+                # Retrieve curve length
+                # Retrieve requested spacing
+                # Calculate how many posts fit within length
+                    # Round if needed ?
+                # For every post:
+                    # Store position information
+                # Return information
+
+            # Curve direction:
             # -- Posts & rails must follow curve direction.
-            # Return the information (will )
+                # Retrieve post positions
+                # For every post:
+                    # Calculate tangent direction of curve (debating whether to do perpendicular direction instead depending on what the "front" of the post is)
+                    # Store direction
+                # Return information
+
+            # Rails:
+            # -- Almost forgot these
+                # Retrieve post posiitons
+                # For each pair of post
+                    # Retrieve start and end position
+                    # Calculate distace and direction between posts (may make these seperate functions like the post posiitons and directions)
+
+            # Put it all together and generate (gulp)
 
 # GUI Class
     # GUI 

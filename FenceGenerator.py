@@ -115,13 +115,36 @@ class FenceGenerator:
                 # Return information
         return post_directions
 
-            # Rails:
-            # -- Almost forgot these
-                # Retrieve post posiitons
-                # For each pair of post
-                    # Retrieve start and end position
-                    # Calculate distace and direction between posts (may make these seperate functions like the post posiitons and directions)
+    # Rails:
+    def get_rail_info(self):
+        positions = self.get_curve_positions()
 
+        rail_info = []
+
+        # For each pair of post
+        for i in range(len(positions) - 1):
+            # Retrieve start and end position
+            start = positions[i]
+            end = positions[i + 1]
+
+            # Calculate distace and direction between posts (may make these seperate functions like the post posiitons and directions)
+            direction = om.MVector(
+                end[0] - start[0], 
+                end[1] - start[1], 
+                end[2] - start[2],
+                )
+
+            distance = direction.length()
+
+            midpooint = (
+                (start[0] + end[0]) / 2,
+                (start[1] + end[1]) / 2,
+                (start[2] + end[2]) / 2,
+            )
+
+            rail_info.append((direction, distance, midpooint))
+
+        return rail_info
             # Put it all together and generate (gulp)
 
     def create_posts(self):

@@ -271,12 +271,28 @@ class FenceGeneratorGUI(QtWidgets.QDialog):
         self.title_label = QtWidgets.QLabel("FenceGenerator")
         self.main_layout.addWidget(self.title_label)
 
+        # Rail SETTINGS:
+        self.rail_settings_group = QtWidgets.QGroupBox("Rail Settings")
+        self.main_layout.addWidget(self.rail_settings_group)
+
+        self.rail_settings_layout = QtWidgets.QFormLayout()
+        self.rail_settings_group.setLayout(self.rail_settings_layout)
+
+        # Rail Count:
+        self.rail_count_spinbox = QtWidgets.QSpinBox()
+        self.rail_count_spinbox.setValue(2)
+
+        self.rail_settings_layout.addRow(
+            "Rail Count",
+            self.rail_count_spinbox
+        )
+
+        # Post SETTINGS:
         self.post_settings_group = QtWidgets.QGroupBox("Post Settings")
         self.main_layout.addWidget(self.post_settings_group)
 
         self.post_settings_layout = QtWidgets.QFormLayout()
         self.post_settings_group.setLayout(self.post_settings_layout)
-        
 
         # Post SPACING:
         self.post_spacing_spinbox = QtWidgets.QDoubleSpinBox()
@@ -326,6 +342,11 @@ class FenceGeneratorGUI(QtWidgets.QDialog):
         self.generate_button.clicked.connect(self.generate_fence)
         
     def update_settings(self):
+
+        # Rails:
+        self.fence_generator.rail_count = self.rail_count_spinbox.value()
+
+        # Posts:
         self.fence_generator.post_spacing = self.post_spacing_spinbox.value()
         self.fence_generator.post_height = self.post_height_spinbox.value()
         self.fence_generator.post_width = self.post_width_spinbox.value()

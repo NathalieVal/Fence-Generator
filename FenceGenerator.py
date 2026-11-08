@@ -7,6 +7,10 @@ import maya.api.OpenMaya as om
 # Fence Generator Class
 class FenceGenerator:
 
+    def __init__(self):
+        self.curve = None
+        self.post_spacing = 2
+
     # NURBS curve input:
 
     def select_curve(self, curve):

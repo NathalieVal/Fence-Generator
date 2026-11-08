@@ -239,6 +239,14 @@ class FenceGenerator:
 class FenceGeneratorGUI(QtWidgets.QDialog):
 
     # Initialize 
+    def __init__(self):
+
         # Super initialize
+        super().__init__()
+        
         # Window properties
+        self.setWindowTitle("FenceGenerator")
+
         # Window layout
+        self.create_layout()
+        self.create_connections()

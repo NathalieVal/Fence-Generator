@@ -20,6 +20,7 @@ length = generator.get_curve_length()
 
 generator.post_spacing = 2.0
 positions = generator.get_curve_positions()
+directions = generator.get_curve_directions()
 
 # Printing tests
 print(f"Length: {length}")
@@ -27,3 +28,8 @@ print(f"Number of posts: {len(positions)}")
 print(f"Post positions:")
 for i, position in enumerate(positions):
     print(i, position)
+
+print(f"Number of directions:{len(directions)}")
+print(f"Post directions:")
+for i, direction in enumerate(directions):
+    print(i, direction)

@@ -285,11 +285,40 @@ class FenceGeneratorGUI(QtWidgets.QDialog):
             self.post_spacing_spinbox
         )
 
+        self.post_height_spinbox = QtWidgets.QDoubleSpinBox()
+        self.post_height_spinbox.setValue(2)
+
+        self.post_settings_layout.addRow(
+            "Post Height",
+            self.post_height_spinbox
+        )
+
+        self.post_width_spinbox = QtWidgets.QDoubleSpinBox()
+        self.post_width_spinbox.setValue(0.2)
+
+        self.post_settings_layout.addRow(
+            "Post Width",
+            self.post_width_spinbox
+        )
+
+        self.post_depth_spinbox = QtWidgets.QDoubleSpinBox()
+        self.post_depth_spinbox.setValue(0.2)
+
+        self.post_settings_layout.addRow(
+            "Post Depth",
+            self.post_depth_spinbox
+        )
+
     def create_connections(self):
         self.generate_button.clicked.connect(self.generate_fence)
         
     def update_settings(self):
         self.fence_generator.post_spacing = self.post_spacing_spinbox.value()
+        self.fence_generator.post_height = self.post_height_spinbox.value()
+        self.fence_generator.post_width = self.post_width_spinbox.value()
+        self.fence_generator.post_depth = self.post_depth_spinbox.value()
+
+
 
     @QtCore.Slot()
     def generate_fence(self):

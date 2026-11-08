@@ -21,9 +21,8 @@ class FenceGenerator:
         # Rail defaults:
         self.rail_count = 2
         self.rail_spacing = 2
-        self.rail_width = 2
         self.rail_height = 2
-        self.rail_depth = 2
+        self.rail_depth = 0.2
 
 
     # NURBS curve input:
@@ -31,14 +30,14 @@ class FenceGenerator:
     def select_curve(self, curve):
         self.curve = curve
 
-        # 1. when user clicks on chosen NURBS curve, and clicks "generate fence" program retrieves curve information    
-        # 2. program checks if curve works for program function
-        # 3. If yes, input can be used to generate fence.
-        # 3.5 IF NOT, display warning.
+    # 1. when user clicks on chosen NURBS curve, and clicks "generate fence" program retrieves curve information    
+    # 2. program checks if curve works for program function
+    # 3. If yes, input can be used to generate fence.
+    # 3.5 IF NOT, display warning.
 
     # Generate fence:
-        # Curve info needed:
-            # Curve length
+    # Curve info needed:
+    # Curve length
 
     def get_curve_func(self):
         selection = om.MSelectionList()
@@ -52,44 +51,44 @@ class FenceGenerator:
         curve_func = self.get_curve_func()
         return curve_func.length()
 
-            # -- How many posts an fit within this length based on the spacing requested? (I just realized math will be required for this haha)
-                # Retrieve selected curve
-                # Calculate total length        
-                # Return information
+    # -- How many posts an fit within this length based on the spacing requested? (I just realized math will be required for this haha)
+    # Retrieve selected curve
+    # Calculate total length        
+    # Return information
 
-            # Post positions:
+    # Post positions:
     def get_curve_positions(self):
 
-            # -- For now, will be assuming that the user wants even spacing.
-            # -- Fence MUST end with a post (pattern assignment already coming in to use)
+        # -- For now, will be assuming that the user wants even spacing.
+        # -- Fence MUST end with a post (pattern assignment already coming in to use)
         curve_func = self.get_curve_func()
 
-                # Retrieve curve length
+        # Retrieve curve length
         curve_length = self.get_curve_length()
 
-                # Retrieve requested spacing
+        # Retrieve requested spacing
         spacing = self.post_spacing
         
-                # Calculate how many posts (intervals) fit within length
-                    # Round if needed ?
+        # Calculate how many posts (intervals) fit within length
+        # Round if needed ?
         interval_count = math.ceil(curve_length / spacing)
 
         post_positions = []
 
-                # For every post:
+        # For every post:
         for i in range(interval_count + 1):
             distance = min(i * spacing, curve_length)
             parameter = curve_func.findParamFromLength(distance)
 
             point = curve_func.getPointAtParam(parameter, om.MSpace.kWorld)
 
-                    # Store position information
+            # Store position information
             post_positions.append((point.x, point.y, point.z))
 
-                # Return information
+        # Return information
         return post_positions
 
-            # Curve direction:
+    # Curve direction:
     def get_curve_directions(self):
         curve_func = self.get_curve_func()
 
@@ -98,12 +97,12 @@ class FenceGenerator:
 
         interval_count = math.ceil(curve_length / spacing)
             # -- Posts & rails must follow curve direction.
-                # Retrieve post positions
+            # Retrieve post positions
         post_directions = []
 
                 # For every post:
-                    # Calculate tangent direction of curve (debating whether to do perpendicular direction instead depending on what the "front" of the post is)
-                    # Store direction
+                # Calculate tangent direction of curve (debating whether to do perpendicular direction instead depending on what the "front" of the post is)
+                # Store direction
         for i in range(interval_count + 1):
             distance = min(i * spacing, curve_length)
             parameter = curve_func.findParamFromLength(distance)
@@ -112,7 +111,7 @@ class FenceGenerator:
             direction.normalize()
             post_directions.append((direction.x, direction.y, direction.z))
 
-                # Return information
+        # Return information
         return post_directions
 
     # Rails:
@@ -182,14 +181,45 @@ class FenceGenerator:
 
     def create_rails(self):
         # 1. Get rail information
-        # 2. Empty list for rails
-        # 3. For each rail:
-        # 3.1 Calculate direction
-        # 3.2 Calculate length
-        # 3.3 Actually create the polyCube
-        # Calculate vertical position
-        # Translate geomtry into position
+        rail_info = self.get_rail_info()
 
+        # 2. Empty list for rails
+        rails = []
+
+        # 3. For each rail:
+        for info in rail_info:
+
+            direction, distance, midpoint = info
+
+            # 3.1 Calculate direction
+            direction_x = direction.x / distance
+            direction_z = direction.z / distance
+
+            # 3.2 Calculate length
+            
+            rail_length = distance 
+            # ?
+
+            # 3.3 Actually create the polyCube
+            rail = cmds.polyCube(
+                width=rail_length, 
+                height=self.rail_height, 
+                depth=self.rail_depth
+                )[0]
+            
+            # Calculate vertical position
+            position_y = midpoint[1]
+
+            # Translate geomtry into position
+            cmds.xform(
+                rail, 
+                worldSpace=True, 
+                translation=(midpoint[0], position_y, midpoint[2])
+                )
+
+            rails.append(rail)
+
+        return rails
 # GUI Class
     # GUI 
     # Display

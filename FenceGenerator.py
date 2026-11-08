@@ -2,6 +2,7 @@
 
 # import
 import math
+import maya.cmds as cmds
 import maya.api.OpenMaya as om
 
 # Fence Generator Class
@@ -136,7 +137,7 @@ class FenceGenerator:
                 worldSpace=True, 
                 translation=(
                 position[0], 
-                position[1], 
+                (position[1] + (self.self.post_height / 2)), 
                 position[2]
                 ))
             

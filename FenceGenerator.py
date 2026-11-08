@@ -1,9 +1,7 @@
-# Will be using class exercise as reference.
-
-# import
 import math
 import maya.cmds as cmds
 import maya.api.OpenMaya as om
+from PySide6 import QtWidgets, QtCore
 
 # Fence Generator Class
 class FenceGenerator:
@@ -237,6 +235,10 @@ class FenceGenerator:
                 rails.append(rail)
 
         return rails
-# GUI Class
-    # GUI 
-    # Display
+
+class FenceGeneratorGUI(QtWidgets.QDialog):
+
+    # Initialize 
+        # Super initialize
+        # Window properties
+        # Window layout

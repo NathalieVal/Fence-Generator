@@ -21,7 +21,8 @@ class FenceGenerator:
         # Rail defaults:
         self.rail_count = 2
         self.rail_spacing = 2
-        self.rail_height = 2
+        self.rail_height = 0.2
+        self.rail_height_offset = 1
         self.rail_depth = 0.2
 
 
@@ -133,6 +134,9 @@ class FenceGenerator:
                 end[2] - start[2],
                 )
 
+            rotation = math.degrees(
+                math.atan2(direction.z, direction.x))
+
             distance = direction.length()
 
             midpooint = (
@@ -141,7 +145,7 @@ class FenceGenerator:
                 (start[2] + end[2]) / 2,
             )
 
-            rail_info.append((direction, distance, midpooint))
+            rail_info.append((direction, distance, midpooint, rotation))
 
         return rail_info
             # Put it all together and generate (gulp)
@@ -189,7 +193,7 @@ class FenceGenerator:
         # 3. For each rail:
         for info in rail_info:
 
-            direction, distance, midpoint = info
+            direction, distance, midpoint, rotation = info
 
             # 3.1 Calculate direction
             direction_x = direction.x / distance
@@ -208,14 +212,21 @@ class FenceGenerator:
                 )[0]
             
             # Calculate vertical position
-            position_y = midpoint[1]
+            position_y = midpoint[1] + self.rail_height_offset
 
             # Translate geomtry into position
             cmds.xform(
                 rail, 
                 worldSpace=True, 
-                translation=(midpoint[0], position_y, midpoint[2])
+                translation=(midpoint[0], position_y, midpoint[2]),
+                # rotation=(0, -rotation, 0)
                 )
+
+            cmds.xform(
+                rail,
+                worldSpace=True, 
+                rotation=(0, -rotation, 0)
+            )
 
             rails.append(rail)
 

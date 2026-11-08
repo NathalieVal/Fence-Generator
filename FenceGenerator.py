@@ -1,10 +1,21 @@
 # Will be using class exercise as reference.
 
 # import
+import maya.api.OpenMaya as om
 
 # Fence Generator Class
+class FenceGenerator:
+
     # NURBS curve input:
+
+    def get_curve_length(self):
         # 1. when user clicks on chosen NURBS curve, and clicks "generate fence" program retrieves curve information
+        selection = om.MSelectionList()
+        selection.add(self.curve)
+        curve_obj = selection.getDagPath(0)
+        curve_func = om.MFnNurbsCurve(curve_obj)
+        return curve_func.length()
+    
         # 2. program checks if curve works for program function
         # 3. If yes, input can be used to generate fence.
         # 3.5 IF NOT, display warning.

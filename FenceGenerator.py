@@ -21,14 +21,16 @@ class FenceGenerator:
         # Curve info needed:
             # Curve length
 
-    def get_curve_length(self):
-        # Selection list & adding selected curve
+    def get_curve_func(self):
         selection = om.MSelectionList()
         selection.add(self.curve)
 
         curve_obj = selection.getDagPath(0)
-        curve_func = om.MFnNurbsCurve(curve_obj)
 
+        return om.MFnNurbsCurve(curve_obj)
+
+    def get_curve_length(self):
+        curve_func = self.get_curve_func()
         return curve_func.length()
 
 
@@ -42,12 +44,7 @@ class FenceGenerator:
 
             # -- For now, will be assuming that the user wants even spacing.
             # -- Fence MUST end with a post (pattern assignment already coming in to use)
-        selection = om.MSelectionList()
-        selection.add(self.curve)
-
-        curve_obj = selection.getDagPath(0)
-        curve_func = om.MFnNurbsCurve(curve_obj)
-
+        curve_func = self.get_curve_func()
 
                 # Retrieve curve length
         curve_len = self.get_curve_length()

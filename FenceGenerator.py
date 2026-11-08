@@ -299,6 +299,28 @@ class FenceGeneratorGUI(QtWidgets.QDialog):
             self.rail_spacing_spinbox
         )
 
+        # Rail HEIGHT OFFSET:
+        self.rail_height_offset_spinbox = QtWidgets.QDoubleSpinBox()
+        self.rail_height_offset_spinbox.setDecimals(1)
+        self.rail_height_offset_spinbox.setSingleStep(0.1)
+        self.rail_height_offset_spinbox.setValue(1)
+
+        self.rail_settings_layout.addRow(
+            "Rail Height Offset",
+            self.rail_height_offset_spinbox
+        )
+
+        # Rail WIDTH:
+        self.rail_width_spinbox = QtWidgets.QDoubleSpinBox()
+        self.rail_width_spinbox.setDecimals(1)
+        self.rail_width_spinbox.setSingleStep(0.1)
+        self.rail_width_spinbox.setValue(0.2)
+
+        self.rail_settings_layout.addRow(
+            "Rail Width",
+            self.rail_width_spinbox
+        )
+
         # Post SETTINGS:
         self.post_settings_group = QtWidgets.QGroupBox("Post Settings")
         self.main_layout.addWidget(self.post_settings_group)
@@ -358,6 +380,8 @@ class FenceGeneratorGUI(QtWidgets.QDialog):
         # Rails:
         self.fence_generator.rail_count = self.rail_count_spinbox.value()
         self.fence_generator.rail_spacing = self.rail_spacing_spinbox.value()
+        self.fence_generator.rail_height_offset = self.rail_height_offset_spinbox.value()
+        self.fence_generator.rail_width_spinbox = self.rail_width_spinbox.value()
 
         # Posts:
         self.fence_generator.post_spacing = self.post_spacing_spinbox.value()

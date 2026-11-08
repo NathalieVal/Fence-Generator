@@ -206,7 +206,8 @@ class FenceGenerator:
                 position_y = (
                     midpoint[1] 
                     + self.rail_height_offset 
-                    + ( i * self.rail_spacing))
+                    + (( i - (self.rail_count - 1) / 2)
+                        * self.rail_spacing))
 
                 # 3.3 Actually create the polyCube
                 rail = cmds.polyCube(

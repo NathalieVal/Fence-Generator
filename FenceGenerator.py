@@ -270,7 +270,14 @@ class FenceGeneratorGUI(QtWidgets.QDialog):
 
     def _form_ui(self):
         self.title_label = QtWidgets.QLabel("FenceGenerator")
+        self.fence_style_combobox = QtWidgets.QComboBox()
+        self.fence_style_combobox.addItems([
+            "Post & Rail",
+            "Chain Link"
+        ])
+
         self.main_layout.addWidget(self.title_label)
+        self.main_layout.addWidget(self.fence_style_combobox)
 
         # Rail SETTINGS:
         self.rail_settings_group = QtWidgets.QGroupBox("Rail Settings")

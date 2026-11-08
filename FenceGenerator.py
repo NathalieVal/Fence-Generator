@@ -113,14 +113,38 @@ class FenceGenerator:
 
             # Put it all together and generate (gulp)
 
-    def create_posts():
+    def create_posts(self):
         # 1. Get post positions
+        positions = self.get_curve_positions()
+    
         # 2. Empty list for posts
+        posts = []
+
         # 3. For each positions: 
+        for position in positions:
+
         # 3.1 Create geometry with height, width, depth.
+            post = cmds.polyCube(
+                width=self.post_width, 
+                height=self.post_height, 
+                depth=self.post_depth
+                )[0]
+
         # 3.2 Translate geometry into position
+            cmds.xform(
+                post, 
+                worldSpace=True, 
+                translation=(
+                position[0], 
+                position[1], 
+                position[2]
+                ))
+            
         # 3.3 add cobe to post list
+            posts.append(post)
+
         # 4. Return post list
+        return posts
 
 # GUI Class
     # GUI 

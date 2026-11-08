@@ -10,6 +10,7 @@ class FenceGenerator:
     def __init__(self):
         self.curve = None
         self.post_spacing = 2
+        
         self.post_width = 0.2
         self.post_height = 2
         self.post_depth = 0.2
@@ -39,7 +40,6 @@ class FenceGenerator:
     def get_curve_length(self):
         curve_func = self.get_curve_func()
         return curve_func.length()
-
 
             # -- How many posts an fit within this length based on the spacing requested? (I just realized math will be required for this haha)
                 # Retrieve selected curve
@@ -112,6 +112,15 @@ class FenceGenerator:
                     # Calculate distace and direction between posts (may make these seperate functions like the post posiitons and directions)
 
             # Put it all together and generate (gulp)
+
+    def create_posts():
+        # 1. Get post positions
+        # 2. Empty list for posts
+        # 3. For each positions: 
+        # 3.1 Create geometry with height, width, depth.
+        # 3.2 Translate geometry into position
+        # 3.3 add cobe to post list
+        # 4. Return post list
 
 # GUI Class
     # GUI 

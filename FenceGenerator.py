@@ -9,12 +9,22 @@ import maya.api.OpenMaya as om
 class FenceGenerator:
 
     def __init__(self):
+        # Selected curve:
         self.curve = None
+
+        # Post defaults:
         self.post_spacing = 2
-        
         self.post_width = 0.2
         self.post_height = 2
         self.post_depth = 0.2
+
+        # Rail defaults:
+        self.rail_count = 2
+        self.rail_spacing = 2
+        self.rail_width = 2
+        self.rail_height = 2
+        self.rail_depth = 2
+
 
     # NURBS curve input:
 
@@ -137,7 +147,7 @@ class FenceGenerator:
                 worldSpace=True, 
                 translation=(
                 position[0], 
-                (position[1] + (self.self.post_height / 2)), 
+                (position[1] + (self.post_height / 2)), 
                 position[2]
                 ))
             

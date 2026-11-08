@@ -8,14 +8,10 @@ class FenceGenerator:
 
     # NURBS curve input:
 
-    def get_curve_length(self):
-        # 1. when user clicks on chosen NURBS curve, and clicks "generate fence" program retrieves curve information
-        selection = om.MSelectionList()
-        selection.add(self.curve)
-        curve_obj = selection.getDagPath(0)
-        curve_func = om.MFnNurbsCurve(curve_obj)
-        return curve_func.length()
-    
+    def select_curve(self, curve):
+        self.curve = curve
+
+        # 1. when user clicks on chosen NURBS curve, and clicks "generate fence" program retrieves curve information    
         # 2. program checks if curve works for program function
         # 3. If yes, input can be used to generate fence.
         # 3.5 IF NOT, display warning.
@@ -23,6 +19,18 @@ class FenceGenerator:
     # Generate fence:
         # Curve info needed:
             # Curve length
+
+    def get_curve_length(self):
+        # Selection list & adding selected curve
+        selection = om.MSelectionList()
+        selection.add(self.curve)
+
+        curve_obj = selection.getDagPath(0)
+        curve_func = om.MFnNurbsCurve(curve_obj)
+
+        return curve_func.length()
+
+
             # -- How many posts an fit within this length based on the spacing requested? (I just realized math will be required for this haha)
                 # Retrieve selected curve
                 # Calculate total length        

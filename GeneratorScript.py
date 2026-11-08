@@ -1,0 +1,25 @@
+import sys
+import importlib
+import maya.cmds as cmds
+
+script_path = r"C:\Users\Natha\OneDrive\2020\Documents\University\F26\Scripting\Fence-Generator"
+sys.path.append(script_path)
+
+import FenceGenerator
+importlib.reload(FenceGenerator)
+
+selected = cmds.ls(selection=True, long=True)
+
+shapes = cmds.listRelatives(
+        selected[0],
+        shapes=True,
+        fullPath=True
+)
+
+curve_shape = cmds.ls(shapes, type="nurbsCurve")[0]
+
+generator = FenceGenerator.FenceGenerator()
+generator.select_curve(curve_shape)
+length = generator.get_curve_length()
+
+print(f"Length: {length}")

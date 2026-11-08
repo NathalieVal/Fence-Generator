@@ -236,6 +236,10 @@ class FenceGenerator:
 
         return rails
 
+    def generate_fence(self):
+        self.create_posts()
+        self.create_rails()
+
 class FenceGeneratorGUI(QtWidgets.QDialog):
 
     # Initialize 
@@ -251,10 +255,16 @@ class FenceGeneratorGUI(QtWidgets.QDialog):
 
         # Window layout
         self.create_layout()
+        self.create_connections()
+        self.update_settings()
 
     def create_layout(self):
         self.main_layout = QtWidgets.QVBoxLayout()
         self._form_ui()
+
+        self.generate_button = QtWidgets.QPushButton("Generate Fence")
+        self.main_layout.addWidget(self.generate_button)
+
         self.setLayout(self.main_layout)
 
     def _form_ui(self):
@@ -274,9 +284,19 @@ class FenceGeneratorGUI(QtWidgets.QDialog):
             "Post Spacing",
             self.post_spacing_spinbox
         )
+
+    def create_connections(self):
+        self.generate_button.clicked.connect(self.generate_fence)
         
+    def update_settings(self):
+        self.fence_generator.post_spacing = self.post_spacing_spinbox.value()
 
-
+    @QtCore.Slot()
+    def generate_fence(self):
+        selected_curve = cmds.ls(selection=True)[0]
+        self.fence_generator.select_curve(selected_curve)
+        self.update_settings()
+        self.fence_generator.generate_fence()
 
 fence_generator_window = None
 

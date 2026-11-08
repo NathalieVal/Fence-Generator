@@ -1,6 +1,7 @@
 # Will be using class exercise as reference.
 
 # import
+import math
 import maya.api.OpenMaya as om
 
 # Fence Generator Class
@@ -37,15 +38,41 @@ class FenceGenerator:
                 # Return information
 
             # Post positions:
+    def get_curve_positions(self):
+
             # -- For now, will be assuming that the user wants even spacing.
             # -- Fence MUST end with a post (pattern assignment already coming in to use)
+        selection = om.MSelectionList()
+        selection.add(self.curve)
+
+        curve_obj = selection.getDagPath(0)
+        curve_func = om.MFnNurbsCurve(curve_obj)
+
+
                 # Retrieve curve length
+        curve_len = self.get_curve_length()
+
                 # Retrieve requested spacing
-                # Calculate how many posts fit within length
+        spacing = self.post_spacing
+        
+                # Calculate how many posts (intervals) fit within length
                     # Round if needed ?
+        interval_count = math.ceil(curve_len / spacing)
+
+        post_positions = []
+
                 # For every post:
+        for i in range(interval_count + 1):
+            distance = min(i * spacing, curve_len)
+            parameter = curve_func.findParamFromLength(distance)
+
+            point = curve_func.getPointAtParam(parameter, om.MSpace.kWorld)
+
                     # Store position information
+            post_positions.append((point.x, point.y, point.z))
+
                 # Return information
+        return post_positions
 
             # Curve direction:
             # -- Posts & rails must follow curve direction.

@@ -10,11 +10,7 @@ importlib.reload(FenceGenerator)
 
 selected = cmds.ls(selection=True, long=True)
 
-shapes = cmds.listRelatives(
-        selected[0],
-        shapes=True,
-        fullPath=True
-)
+shapes = cmds.listRelatives(selected[0], shapes=True, fullPath=True)
 
 curve_shape = cmds.ls(shapes, type="nurbsCurve")[0]
 
@@ -22,4 +18,12 @@ generator = FenceGenerator.FenceGenerator()
 generator.select_curve(curve_shape)
 length = generator.get_curve_length()
 
+generator.post_spacing = 2.0
+positions = generator.get_curve_positions()
+
+# Printing tests
 print(f"Length: {length}")
+print(f"Number of posts: {len(positions)}")
+print(f"Post positions:")
+for i, position in enumerate(positions):
+    print(i, position)

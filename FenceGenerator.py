@@ -10,6 +10,9 @@ class FenceGenerator:
     def __init__(self):
         self.curve = None
         self.post_spacing = 2
+        self.post_width = 0.2
+        self.post_height = 2
+        self.post_depth = 0.2
 
     # NURBS curve input:
 

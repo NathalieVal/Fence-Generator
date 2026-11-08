@@ -180,6 +180,16 @@ class FenceGenerator:
         # 4. Return post list
         return posts
 
+    def create_rails(self):
+        # 1. Get rail information
+        # 2. Empty list for rails
+        # 3. For each rail:
+        # 3.1 Calculate direction
+        # 3.2 Calculate length
+        # 3.3 Actually create the polyCube
+        # Calculate vertical position
+        # Translate geomtry into position
+
 # GUI Class
     # GUI 
     # Display

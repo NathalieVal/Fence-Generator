@@ -47,20 +47,20 @@ class FenceGenerator:
         curve_func = self.get_curve_func()
 
                 # Retrieve curve length
-        curve_len = self.get_curve_length()
+        curve_length = self.get_curve_length()
 
                 # Retrieve requested spacing
         spacing = self.post_spacing
         
                 # Calculate how many posts (intervals) fit within length
                     # Round if needed ?
-        interval_count = math.ceil(curve_len / spacing)
+        interval_count = math.ceil(curve_length / spacing)
 
         post_positions = []
 
                 # For every post:
         for i in range(interval_count + 1):
-            distance = min(i * spacing, curve_len)
+            distance = min(i * spacing, curve_length)
             parameter = curve_func.findParamFromLength(distance)
 
             point = curve_func.getPointAtParam(parameter, om.MSpace.kWorld)
@@ -72,12 +72,30 @@ class FenceGenerator:
         return post_positions
 
             # Curve direction:
+    def get_curve_directions(self):
+        curve_func = self.get_curve_func()
+
+        curve_length = self.get_curve_length()
+        spacing = self.post_spacing
+
+        interval_count = math.ceil(curve_length / spacing)
             # -- Posts & rails must follow curve direction.
                 # Retrieve post positions
+        post_directions = []
+
                 # For every post:
                     # Calculate tangent direction of curve (debating whether to do perpendicular direction instead depending on what the "front" of the post is)
                     # Store direction
+        for i in range(interval_count + 1):
+            distance = min(i * spacing, curve_length)
+            parameter = curve_func.findParamFromLength(distance)
+
+            direction = curve_func.tangent(parameter, om.MSpace.kWorld)
+            direction.normalize()
+            post_directions.append((direction.x, direction.y, direction.z))
+
                 # Return information
+        return post_directions
 
             # Rails:
             # -- Almost forgot these

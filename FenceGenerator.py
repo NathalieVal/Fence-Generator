@@ -20,7 +20,7 @@ class FenceGenerator:
 
         # Rail defaults:
         self.rail_count = 2
-        self.rail_spacing = 2
+        self.rail_spacing = 0.5
         self.rail_height = 0.2
         self.rail_height_offset = 1
         self.rail_depth = 0.2
@@ -202,33 +202,39 @@ class FenceGenerator:
             # 3.2 Calculate length
             
             rail_length = distance 
-            # ?
 
-            # 3.3 Actually create the polyCube
-            rail = cmds.polyCube(
-                width=rail_length, 
-                height=self.rail_height, 
-                depth=self.rail_depth
-                )[0]
-            
-            # Calculate vertical position
-            position_y = midpoint[1] + self.rail_height_offset
+            # Create rails based on rail_count
+            for i in range(self.rail_count):
+                position_y = (
+                    midpoint[1] 
+                    + self.rail_height_offset 
+                    + ( i * self.rail_spacing))
 
-            # Translate geomtry into position
-            cmds.xform(
-                rail, 
-                worldSpace=True, 
-                translation=(midpoint[0], position_y, midpoint[2]),
-                # rotation=(0, -rotation, 0)
+                # 3.3 Actually create the polyCube
+                rail = cmds.polyCube(
+                    width=rail_length, 
+                    height=self.rail_height, 
+                    depth=self.rail_depth
+                    )[0]
+                
+                # Calculate vertical position
+                # position_y = midpoint[1] + self.rail_height_offset
+
+                # Translate geomtry into position
+                cmds.xform(
+                    rail, 
+                    worldSpace=True, 
+                    translation=(midpoint[0], position_y, midpoint[2]),
+                    # rotation=(0, -rotation, 0)
+                    )
+
+                cmds.xform(
+                    rail,
+                    worldSpace=True, 
+                    rotation=(0, -rotation, 0)
                 )
 
-            cmds.xform(
-                rail,
-                worldSpace=True, 
-                rotation=(0, -rotation, 0)
-            )
-
-            rails.append(rail)
+                rails.append(rail)
 
         return rails
 # GUI Class

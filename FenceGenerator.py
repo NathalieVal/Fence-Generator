@@ -253,7 +253,29 @@ class FenceGeneratorGUI(QtWidgets.QDialog):
         self.create_layout()
 
     def create_layout(self):
-        self.main_lay = QtWidgets.QVBoxLayout()
+        self.main_layout = QtWidgets.QVBoxLayout()
+        self._form_ui()
+        self.setLayout(self.main_layout)
+
+    def _form_ui(self):
+        self.title_label = QtWidgets.QLabel("FenceGenerator")
+        self.main_layout.addWidget(self.title_label)
+
+        self.post_settings_group = QtWidgets.QGroupBox("Post Settings")
+        self.main_layout.addWidget(self.post_settings_group)
+
+        self.post_settings_layout = QtWidgets.QFormLayout()
+        self.post_settings_group.setLayout(self.post_settings_layout)
+
+        self.post_spacing_spinbox = QtWidgets.QDoubleSpinBox()
+        self.post_spacing_spinbox.setValue(2)
+
+        self.post_settings_layout.addRow(
+            "Post Spacing",
+            self.post_spacing_spinbox
+        )
+        
+
 
 
 fence_generator_window = None

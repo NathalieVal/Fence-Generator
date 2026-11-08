@@ -276,8 +276,12 @@ class FenceGeneratorGUI(QtWidgets.QDialog):
 
         self.post_settings_layout = QtWidgets.QFormLayout()
         self.post_settings_group.setLayout(self.post_settings_layout)
+        
 
+        # Post SPACING:
         self.post_spacing_spinbox = QtWidgets.QDoubleSpinBox()
+        self.post_spacing_spinbox.setSingleStep(0.1)
+        self.post_spacing_spinbox.setDecimals(1)
         self.post_spacing_spinbox.setValue(2)
 
         self.post_settings_layout.addRow(
@@ -285,7 +289,10 @@ class FenceGeneratorGUI(QtWidgets.QDialog):
             self.post_spacing_spinbox
         )
 
+        # Post HEGIHT:
         self.post_height_spinbox = QtWidgets.QDoubleSpinBox()
+        self.post_height_spinbox.setSingleStep(0.1)
+        self.post_height_spinbox.setDecimals(1)       
         self.post_height_spinbox.setValue(2)
 
         self.post_settings_layout.addRow(
@@ -293,7 +300,10 @@ class FenceGeneratorGUI(QtWidgets.QDialog):
             self.post_height_spinbox
         )
 
+        # Post WIDTH:
         self.post_width_spinbox = QtWidgets.QDoubleSpinBox()
+        self.post_width_spinbox.setSingleStep(0.1)
+        self.post_width_spinbox.setDecimals(1)  
         self.post_width_spinbox.setValue(0.2)
 
         self.post_settings_layout.addRow(
@@ -301,7 +311,10 @@ class FenceGeneratorGUI(QtWidgets.QDialog):
             self.post_width_spinbox
         )
 
+        # Post DEPTH:
         self.post_depth_spinbox = QtWidgets.QDoubleSpinBox()
+        self.post_depth_spinbox.setSingleStep(0.1)
+        self.post_depth_spinbox.setDecimals(1)  
         self.post_depth_spinbox.setValue(0.2)
 
         self.post_settings_layout.addRow(

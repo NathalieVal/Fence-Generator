@@ -23,11 +23,6 @@ class FenceGenerator:
         self.rail_height_offset = 1
         self.rail_depth = 0.2
 
-        # Chain defaults:
-        self.diamond_size = 0.2
-        self.diamond_height = 0.2
-        self.diamong_width = 0.2
-
 
     # NURBS curve input:
 
@@ -242,163 +237,22 @@ class FenceGenerator:
 
         return rails
 
-    # def create_test_diamond_patern(self):
-        mesh_width = 4.0
-        mesh_height = 2.0
-
-        diamond_count = math.ceil(mesh_width / self.diamond_size)
-        row_count = math.ceil(mesh_height / (self.diamond_size / 2))
-
-        for row in range(row_count):
-            offset_y = row * (self.diamond_size / 2)
-            row_offset_x = (row % 2) * (self.diamond_size / 2)
-
-            for i in range(diamond_count):
-                offset_x = (i * self.diamond_size) + row_offset_x
-
-                top = (offset_x, offset_y + self.diamond_size / 2, 0)
-                bottom = (offset_x, offset_y - self.diamond_size / 2, 0)
-                right = (offset_x + self.diamond_size / 2, offset_y, 0)
-                left = (offset_x - self.diamond_size / 2, offset_y, 0)
-
-                cmds.curve(
-                    degree=1,
-                    point=[top, right, bottom]
-                )
-
-                cmds.curve(
-                    degree=1,
-                    point=[bottom, left, top]
-                )
-
-    def create_diamond_pattern(self, mesh_width, mesh_height, midpoint, rotation):
-        pattern_curves = []
-        
-        diamond_count = math.ceil(mesh_width / self.diamond_size)
-        row_count = math.ceil(mesh_height / (self.diamond_size / 2))
-        start_x = -mesh_width / 2
-        start_y = -mesh_height / 2
-
-        for row in range(row_count):
-            offset_y = start_y + row * (self.diamond_size / 2)
-            row_offset_x = start_x + (row % 2) * (self.diamond_size / 2)
-
-            for i in range(diamond_count):
-                offset_x = (i * self.diamond_size) + row_offset_x
-
-                top = (
-                    offset_x,
-                    offset_y + self.diamond_size / 2,
-                    0
-                )
-
-                bottom = (
-                    offset_x,
-                    offset_y - self.diamond_size / 2,
-                    0
-                )
-
-                right = (
-                    offset_x + self.diamond_size / 2,
-                    offset_y,
-                    0
-                )
-
-                left = (
-                    offset_x - self.diamond_size / 2,
-                    offset_y,
-                    0
-                )
-
-                curve = cmds.curve(
-                    degree=1,
-                    point=[top, right, bottom]
-                )
-
-                pattern_curves.append(curve)
-
-                curve = cmds.curve(
-                    degree=1,
-                    point=[bottom, left, top]
-                )
-
-                pattern_curves.append(curve)
-
-        pattern_group = cmds.group(
-            pattern_curves,
-            name="chainLinkPattern"
-        )
-
-        cmds.xform(
-            pattern_group,
-            worldSpace=True,
-            rotation=(0, -rotation, 0)
-        )
-
-        cmds.xform(
-            pattern_group,
-            worldSpace=True,
-            translation=midpoint
-        )
-
-    def get_mesh_info(self):
-        positions = self.get_curve_positions()
-        mesh_info = []
-
-        # Copying and pasting 
-        for i in range(len(positions) - 1):
-            # Retrieve start and end position
-            start = positions[i]
-            end = positions[i + 1]
-
-            # Calculate distace and direction between posts (may make these seperate functions like the post posiitons and directions)
-            direction = om.MVector(
-                end[0] - start[0], 
-                end[1] - start[1], 
-                end[2] - start[2],
-                )
-
-            rotation = math.degrees(
-                math.atan2(direction.z, direction.x))
-
-            distance = direction.length()
-
-            midpooint = (
-                (start[0] + end[0]) / 2,
-                (start[1] + end[1]) / 2,
-                (start[2] + end[2]) / 2,
-            )
-
-            direction_x = direction.x / distance
-            direction_z = direction.z / distance
-
-            post_half_extent = (
-                abs(direction_x) * self.post_width / 2 
-                + abs(direction_z) * self.post_depth / 2
-            )
-
-            mesh_width = distance - (post_half_extent * 2)
-            mesh_height = self.post_height
-
-            mesh_info.append((mesh_width, mesh_height, midpooint, rotation))
-
-        return mesh_info
-
-    def create_test_mesh_panel(self):
-        mesh_info = self.get_mesh_info()
-        
-        for mesh_width, mesh_height, midpoint, rotation in mesh_info:
-
-            self.create_diamond_pattern(
-                mesh_width,
-                mesh_height,
-                midpoint,
-                rotation
-            )
-
     def generate_fence(self):
-            self.create_posts()
-            self.create_rails()
+        posts = self.create_posts()
+        rails = self.create_rails()
+
+        posts_group = cmds.group(
+            
+        )
+
+        fence_parts = posts + rails
+
+        fence_group = cmds.group(
+            fence_parts,
+            name="fenceGenerator_GRP"
+        )
+
+        return fence_group
 
 class FenceGeneratorGUI(QtWidgets.QDialog):
 
@@ -429,14 +283,7 @@ class FenceGeneratorGUI(QtWidgets.QDialog):
 
     def _form_ui(self):
         self.title_label = QtWidgets.QLabel("FenceGenerator")
-        self.fence_style_combobox = QtWidgets.QComboBox()
-        self.fence_style_combobox.addItems([
-            "Post & Rail",
-            "Chain Link"
-        ])
-
         self.main_layout.addWidget(self.title_label)
-        self.main_layout.addWidget(self.fence_style_combobox)
 
         # Rail SETTINGS:
         self.rail_settings_group = QtWidgets.QGroupBox("Rail Settings")
@@ -538,22 +385,8 @@ class FenceGeneratorGUI(QtWidgets.QDialog):
             self.post_depth_spinbox
         )
 
-    def update_fence_style(self):
-        fence_style = self.fence_style_combobox.currentText()
-
-        if fence_style == "Post & Rail":
-            self.post_settings_group.show()
-            self.rail_settings_group.show()
-
-        else:
-            self.post_settings_group.hide()
-            self.rail_settings_group.hide()
-
     def create_connections(self):
         self.generate_button.clicked.connect(self.generate_fence)
-        self.fence_style_combobox.currentIndexChanged.connect(
-            self.update_fence_style
-        )
         
     def update_settings(self):
 
@@ -561,7 +394,8 @@ class FenceGeneratorGUI(QtWidgets.QDialog):
         self.fence_generator.rail_count = self.rail_count_spinbox.value()
         self.fence_generator.rail_spacing = self.rail_spacing_spinbox.value()
         self.fence_generator.rail_height_offset = self.rail_height_offset_spinbox.value()
-        self.fence_generator.rail_width_spinbox = self.rail_width_spinbox.value()
+        self.fence_generator.rail_height = self.rail_width_spinbox.value()
+        self.fence_generator.rail_depth = self.rail_width_spinbox.value()
 
         # Posts:
         self.fence_generator.post_spacing = self.post_spacing_spinbox.value()

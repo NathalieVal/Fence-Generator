@@ -241,10 +241,7 @@ class FenceGenerator:
         posts = self.create_posts()
         rails = self.create_rails()
 
-        posts_group = cmds.group(
-            
-        )
-
+        # Fence group
         fence_parts = posts + rails
 
         fence_group = cmds.group(
@@ -268,7 +265,6 @@ class FenceGeneratorGUI(QtWidgets.QDialog):
         self.setWindowTitle("FenceGenerator")
 
         self.create_layout()
-        self.update_fence_style()
         self.create_connections()
         self.update_settings()
 

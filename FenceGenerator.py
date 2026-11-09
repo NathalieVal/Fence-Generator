@@ -28,6 +28,7 @@ class FenceGenerator:
         self.diamond_height = 0.2
         self.diamong_width = 0.2
 
+
     # NURBS curve input:
 
     def select_curve(self, curve):
@@ -241,7 +242,7 @@ class FenceGenerator:
 
         return rails
 
-    def create_test_diamond_patern(self):
+    # def create_test_diamond_patern(self):
         mesh_width = 4.0
         mesh_height = 2.0
 
@@ -269,6 +270,76 @@ class FenceGenerator:
                     degree=1,
                     point=[bottom, left, top]
                 )
+
+    def create_diamond_pattern(self, mesh_width, mesh_height, midpoint, rotation):
+        pattern_curves = []
+        
+        diamond_count = math.ceil(mesh_width / self.diamond_size)
+        row_count = math.ceil(mesh_height / (self.diamond_size / 2))
+        start_x = -mesh_width / 2
+        start_y = -mesh_height / 2
+
+        for row in range(row_count):
+            offset_y = start_y + row * (self.diamond_size / 2)
+            row_offset_x = start_x + (row % 2) * (self.diamond_size / 2)
+
+            for i in range(diamond_count):
+                offset_x = (i * self.diamond_size) + row_offset_x
+
+                top = (
+                    offset_x,
+                    offset_y + self.diamond_size / 2,
+                    0
+                )
+
+                bottom = (
+                    offset_x,
+                    offset_y - self.diamond_size / 2,
+                    0
+                )
+
+                right = (
+                    offset_x + self.diamond_size / 2,
+                    offset_y,
+                    0
+                )
+
+                left = (
+                    offset_x - self.diamond_size / 2,
+                    offset_y,
+                    0
+                )
+
+                curve = cmds.curve(
+                    degree=1,
+                    point=[top, right, bottom]
+                )
+
+                pattern_curves.append(curve)
+
+                curve = cmds.curve(
+                    degree=1,
+                    point=[bottom, left, top]
+                )
+
+                pattern_curves.append(curve)
+
+        pattern_group = cmds.group(
+            pattern_curves,
+            name="chainLinkPattern"
+        )
+
+        cmds.xform(
+            pattern_group,
+            worldSpace=True,
+            rotation=(0, -rotation, 0)
+        )
+
+        cmds.xform(
+            pattern_group,
+            worldSpace=True,
+            translation=midpoint
+        )
 
     def get_mesh_info(self):
         positions = self.get_curve_positions()
@@ -318,28 +389,11 @@ class FenceGenerator:
         
         for mesh_width, mesh_height, midpoint, rotation in mesh_info:
 
-            panel = cmds.polyPlane(
-                width=mesh_width,
-                height=mesh_height,
-                axis=(0, 0, 1)
-            )
-
-            panel_position = (
-                midpoint[0],
-                midpoint[1] + (mesh_height / 2),
-                midpoint[2]
-            )
-
-            cmds.xform(
-                panel,
-                worldSpace=True,
-                translation=panel_position
-            )
-
-            cmds.xform(
-                panel,
-                worldSpace=True,
-                rotation=(0, -rotation, 0)
+            self.create_diamond_pattern(
+                mesh_width,
+                mesh_height,
+                midpoint,
+                rotation
             )
 
     def generate_fence(self):

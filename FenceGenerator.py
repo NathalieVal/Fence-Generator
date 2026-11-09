@@ -241,7 +241,7 @@ class FenceGenerator:
 
         return rails
 
-    def create_test_diamond(self):
+    def create_test_diamond_patern(self):
         mesh_width = 4.0
         mesh_height = 2.0
 
@@ -269,6 +269,78 @@ class FenceGenerator:
                     degree=1,
                     point=[bottom, left, top]
                 )
+
+    def get_mesh_info(self):
+        positions = self.get_curve_positions()
+        mesh_info = []
+
+        # Copying and pasting 
+        for i in range(len(positions) - 1):
+            # Retrieve start and end position
+            start = positions[i]
+            end = positions[i + 1]
+
+            # Calculate distace and direction between posts (may make these seperate functions like the post posiitons and directions)
+            direction = om.MVector(
+                end[0] - start[0], 
+                end[1] - start[1], 
+                end[2] - start[2],
+                )
+
+            rotation = math.degrees(
+                math.atan2(direction.z, direction.x))
+
+            distance = direction.length()
+
+            midpooint = (
+                (start[0] + end[0]) / 2,
+                (start[1] + end[1]) / 2,
+                (start[2] + end[2]) / 2,
+            )
+
+            direction_x = direction.x / distance
+            direction_z = direction.z / distance
+
+            post_half_extent = (
+                abs(direction_x) * self.post_width / 2 
+                + abs(direction_z) * self.post_depth / 2
+            )
+
+            mesh_width = distance - (post_half_extent * 2)
+            mesh_height = self.post_height
+
+            mesh_info.append((mesh_width, mesh_height, midpooint, rotation))
+
+        return mesh_info
+
+    def create_test_mesh_panel(self):
+        mesh_info = self.get_mesh_info()
+        
+        for mesh_width, mesh_height, midpoint, rotation in mesh_info:
+
+            panel = cmds.polyPlane(
+                width=mesh_width,
+                height=mesh_height,
+                axis=(0, 0, 1)
+            )
+
+            panel_position = (
+                midpoint[0],
+                midpoint[1] + (mesh_height / 2),
+                midpoint[2]
+            )
+
+            cmds.xform(
+                panel,
+                worldSpace=True,
+                translation=panel_position
+            )
+
+            cmds.xform(
+                panel,
+                worldSpace=True,
+                rotation=(0, -rotation, 0)
+            )
 
     def generate_fence(self):
             self.create_posts()

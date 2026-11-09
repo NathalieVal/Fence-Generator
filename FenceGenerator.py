@@ -242,20 +242,33 @@ class FenceGenerator:
         return rails
 
     def create_test_diamond(self):
-            top = (0, self.diamond_size / 2, 0)
-            bottom = (0, -self.diamond_size / 2, 0)
-            right = (self.diamond_size / 2, 0, 0)
-            left = (-self.diamond_size / 2, 0, 0)
+        mesh_width = 4.0
+        mesh_height = 2.0
 
-            cmds.curve(
-                degree=1,
-                point=[top, right, bottom]
-            )
+        diamond_count = math.ceil(mesh_width / self.diamond_size)
+        row_count = math.ceil(mesh_height / (self.diamond_size / 2))
 
-            cmds.curve(
-                degree=1,
-                point=[bottom, left, top]
-            )
+        for row in range(row_count):
+            offset_y = row * (self.diamond_size / 2)
+            row_offset_x = (row % 2) * (self.diamond_size / 2)
+
+            for i in range(diamond_count):
+                offset_x = (i * self.diamond_size) + row_offset_x
+
+                top = (offset_x, offset_y + self.diamond_size / 2, 0)
+                bottom = (offset_x, offset_y - self.diamond_size / 2, 0)
+                right = (offset_x + self.diamond_size / 2, offset_y, 0)
+                left = (offset_x - self.diamond_size / 2, offset_y, 0)
+
+                cmds.curve(
+                    degree=1,
+                    point=[top, right, bottom]
+                )
+
+                cmds.curve(
+                    degree=1,
+                    point=[bottom, left, top]
+                )
 
     def generate_fence(self):
             self.create_posts()

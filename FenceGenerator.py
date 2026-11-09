@@ -29,15 +29,6 @@ class FenceGenerator:
     def select_curve(self, curve):
         self.curve = curve
 
-    # 1. when user clicks on chosen NURBS curve, and clicks "generate fence" program retrieves curve information    
-    # 2. program checks if curve works for program function
-    # 3. If yes, input can be used to generate fence.
-    # 3.5 IF NOT, display warning.
-
-    # Generate fence:
-    # Curve info needed:
-    # Curve length
-
     def get_curve_func(self):
         selection = om.MSelectionList()
         selection.add(self.curve)
@@ -50,16 +41,8 @@ class FenceGenerator:
         curve_func = self.get_curve_func()
         return curve_func.length()
 
-    # -- How many posts an fit within this length based on the spacing requested? (I just realized math will be required for this haha)
-    # Retrieve selected curve
-    # Calculate total length        
-    # Return information
-
     # Post positions:
     def get_curve_positions(self):
-
-        # -- For now, will be assuming that the user wants even spacing.
-        # -- Fence MUST end with a post (pattern assignment already coming in to use)
         curve_func = self.get_curve_func()
 
         # Retrieve curve length
@@ -67,9 +50,8 @@ class FenceGenerator:
 
         # Retrieve requested spacing
         spacing = self.post_spacing
-        
-        # Calculate how many posts (intervals) fit within length
-        # Round if needed ?
+
+        # Round if needed 
         interval_count = math.ceil(curve_length / spacing)
 
         post_positions = []
@@ -95,13 +77,9 @@ class FenceGenerator:
         spacing = self.post_spacing
 
         interval_count = math.ceil(curve_length / spacing)
-            # -- Posts & rails must follow curve direction.
-            # Retrieve post positions
+
         post_directions = []
 
-                # For every post:
-                # Calculate tangent direction of curve (debating whether to do perpendicular direction instead depending on what the "front" of the post is)
-                # Store direction
         for i in range(interval_count + 1):
             distance = min(i * spacing, curve_length)
             parameter = curve_func.findParamFromLength(distance)
@@ -117,15 +95,15 @@ class FenceGenerator:
     def get_rail_info(self):
         positions = self.get_curve_positions()
 
+        # Rail info list:
         rail_info = []
 
-        # For each pair of post
         for i in range(len(positions) - 1):
             # Retrieve start and end position
             start = positions[i]
             end = positions[i + 1]
 
-            # Calculate distace and direction between posts (may make these seperate functions like the post posiitons and directions)
+            # Calculate distace and direction between posts
             direction = om.MVector(
                 end[0] - start[0], 
                 end[1] - start[1], 
@@ -146,26 +124,20 @@ class FenceGenerator:
             rail_info.append((direction, distance, midpooint, rotation))
 
         return rail_info
-            # Put it all together and generate (gulp)
 
     def create_posts(self):
-        # 1. Get post positions
         positions = self.get_curve_positions()
     
-        # 2. Empty list for posts
         posts = []
 
-        # 3. For each positions: 
         for position in positions:
 
-        # 3.1 Create geometry with height, width, depth.
             post = cmds.polyCube(
                 width=self.post_width, 
                 height=self.post_height, 
                 depth=self.post_depth
                 )[0]
 
-        # 3.2 Translate geometry into position
             cmds.xform(
                 post, 
                 worldSpace=True, 
@@ -175,33 +147,24 @@ class FenceGenerator:
                 position[2]
                 ))
             
-        # 3.3 add cobe to post list
             posts.append(post)
 
-        # 4. Return post list
         return posts
 
     def create_rails(self):
-        # 1. Get rail information
         rail_info = self.get_rail_info()
 
-        # 2. Empty list for rails
         rails = []
 
-        # 3. For each rail:
         for info in rail_info:
 
             direction, distance, midpoint, rotation = info
 
-            # 3.1 Calculate direction
             direction_x = direction.x / distance
             direction_z = direction.z / distance
-
-            # 3.2 Calculate length
             
             rail_length = distance 
 
-            # Create rails based on rail_count
             for i in range(self.rail_count):
                 position_y = (
                     midpoint[1] 
@@ -209,17 +172,12 @@ class FenceGenerator:
                     + (( i - (self.rail_count - 1) / 2)
                         * self.rail_spacing))
 
-                # 3.3 Actually create the polyCube
                 rail = cmds.polyCube(
                     width=rail_length, 
                     height=self.rail_height, 
                     depth=self.rail_depth
                     )[0]
                 
-                # Calculate vertical position
-                # position_y = midpoint[1] + self.rail_height_offset
-
-                # Translate geomtry into position
                 cmds.xform(
                     rail, 
                     worldSpace=True, 
@@ -238,6 +196,13 @@ class FenceGenerator:
         return rails
 
     def generate_fence(self):
+        curve_name = self.curve.split("|")[-1]
+
+        fence_name = f"fenceGenerator_{curve_name}"
+
+        if cmds.objExists(fence_name):
+            cmds.delete(fence_name)
+        
         posts = self.create_posts()
         rails = self.create_rails()
 
@@ -246,7 +211,7 @@ class FenceGenerator:
 
         fence_group = cmds.group(
             fence_parts,
-            name="fenceGenerator_GRP"
+            name=fence_name
         )
 
         return fence_group
@@ -258,6 +223,11 @@ class FenceGeneratorGUI(QtWidgets.QDialog):
 
         # Super initialize
         super().__init__()
+
+        self.setWindowFlags(
+            self.windowFlags() |
+            QtCore.Qt.WindowType.WindowStaysOnTopHint
+        )
 
         self.fence_generator = FenceGenerator()
 
@@ -413,5 +383,9 @@ fence_generator_window = None
 def show_gui():
     global fence_generator_window
 
-    fence_generator_window = FenceGeneratorGUI()
+    if fence_generator_window is None:
+        fence_generator_window = FenceGeneratorGUI()
+
     fence_generator_window.show()
+    fence_generator_window.raise_()
+    fence_generator_window.activateWindow()

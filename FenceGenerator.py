@@ -23,6 +23,10 @@ class FenceGenerator:
         self.rail_height_offset = 1
         self.rail_depth = 0.2
 
+        # Chain defaults:
+        self.diamond_size = 0.2
+        self.diamond_height = 0.2
+        self.diamong_width = 0.2
 
     # NURBS curve input:
 
@@ -237,9 +241,25 @@ class FenceGenerator:
 
         return rails
 
+    def create_test_diamond(self):
+            top = (0, self.diamond_size / 2, 0)
+            bottom = (0, -self.diamond_size / 2, 0)
+            right = (self.diamond_size / 2, 0, 0)
+            left = (-self.diamond_size / 2, 0, 0)
+
+            cmds.curve(
+                degree=1,
+                point=[top, right, bottom]
+            )
+
+            cmds.curve(
+                degree=1,
+                point=[bottom, left, top]
+            )
+
     def generate_fence(self):
-        self.create_posts()
-        self.create_rails()
+            self.create_posts()
+            self.create_rails()
 
 class FenceGeneratorGUI(QtWidgets.QDialog):
 
@@ -254,8 +274,8 @@ class FenceGeneratorGUI(QtWidgets.QDialog):
         # Window properties
         self.setWindowTitle("FenceGenerator")
 
-        # Window layout
         self.create_layout()
+        self.update_fence_style()
         self.create_connections()
         self.update_settings()
 
@@ -379,8 +399,22 @@ class FenceGeneratorGUI(QtWidgets.QDialog):
             self.post_depth_spinbox
         )
 
+    def update_fence_style(self):
+        fence_style = self.fence_style_combobox.currentText()
+
+        if fence_style == "Post & Rail":
+            self.post_settings_group.show()
+            self.rail_settings_group.show()
+
+        else:
+            self.post_settings_group.hide()
+            self.rail_settings_group.hide()
+
     def create_connections(self):
         self.generate_button.clicked.connect(self.generate_fence)
+        self.fence_style_combobox.currentIndexChanged.connect(
+            self.update_fence_style
+        )
         
     def update_settings(self):
 
